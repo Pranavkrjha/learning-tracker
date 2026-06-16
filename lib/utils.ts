@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import type { FilterStatus, VideoRow } from './types'
 
 // =============================================================================
-// TAILWIND CLASS MERGE
+// TAILWIND CLASS MERGE (shadcn requirement)
 // =============================================================================
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -17,74 +17,44 @@ export function slugify(text: string): string {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')       // Replace spaces with -
-    .replace(/[^\w-]+/g, '')    // Remove all non-word chars
-    .replace(/--+/g, '-')       // Replace multiple - with single -
-    .replace(/^-+/, '')         // Trim - from start
-    .replace(/-+$/, '')         // Trim - from end
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
 }
 
 // =============================================================================
 // DURATION UTILITIES
 // =============================================================================
 
-/**
- * Formats total seconds into "HH:MM:SS" or "MM:SS" string
- */
 export function formatDuration(totalSeconds: number): string {
   if (totalSeconds <= 0) return '0:00'
-
   const hours = Math.floor(totalSeconds / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
-
   const mm = String(minutes).padStart(2, '0')
   const ss = String(seconds).padStart(2, '0')
-
-  if (hours > 0) {
-    return `${hours}:${mm}:${ss}`
-  }
+  if (hours > 0) return `${hours}:${mm}:${ss}`
   return `${mm}:${ss}`
 }
 
-/**
- * Formats seconds into a human-readable string like "2h 34m" or "45m"
- */
 export function formatDurationHuman(totalSeconds: number): string {
   if (totalSeconds <= 0) return '0m'
-
   const hours = Math.floor(totalSeconds / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
-
   if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`
   if (hours > 0) return `${hours}h`
   return `${minutes}m`
 }
 
-/**
- * Parses "HH:MM:SS" or "MM:SS" or plain seconds string to total seconds
- */
 export function parseDuration(input: string): number {
   if (!input || input.trim() === '') return 0
-
-  // Plain number = seconds
-  if (/^\d+$/.test(input.trim())) {
-    return parseInt(input.trim(), 10)
-  }
-
+  if (/^\d+$/.test(input.trim())) return parseInt(input.trim(), 10)
   const parts = input.trim().split(':').map(Number)
-
   if (parts.some(isNaN)) return 0
-
-  if (parts.length === 3) {
-    // HH:MM:SS
-    return parts[0] * 3600 + parts[1] * 60 + parts[2]
-  }
-  if (parts.length === 2) {
-    // MM:SS
-    return parts[0] * 60 + parts[1]
-  }
-
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+  if (parts.length === 2) return parts[0] * 60 + parts[1]
   return 0
 }
 
@@ -101,9 +71,6 @@ export function getRemainingSeconds(video: VideoRow): number {
   return Math.max(0, video.total_duration_seconds - video.watched_duration_seconds)
 }
 
-/**
- * Returns a Tailwind color class based on progress percentage
- */
 export function getProgressColor(percent: number): string {
   if (percent >= 100) return 'text-emerald-400'
   if (percent >= 75) return 'text-cyan-400'
@@ -177,7 +144,6 @@ export function formatRelativeDate(dateString: string): string {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-
   if (days === 0) return 'Today'
   if (days === 1) return 'Yesterday'
   if (days < 7) return `${days} days ago`
