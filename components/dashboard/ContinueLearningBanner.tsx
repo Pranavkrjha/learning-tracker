@@ -12,7 +12,11 @@ interface ContinueLearningBannerProps {
 }
 
 export function ContinueLearningBanner({ data }: ContinueLearningBannerProps) {
-  const href = `/course/${data.courseSlug}/playlist/${data.playlistId}`
+  // Deep-link into Focus Mode at the exact resume timestamp
+  const base = `/course/${data.courseSlug}/playlist/${data.playlistId}/watch/${data.videoId}`
+  const href = data.lastPositionSeconds > 0
+    ? `${base}?t=${data.lastPositionSeconds}`
+    : base
 
   return (
     <Link href={href} className="block group">

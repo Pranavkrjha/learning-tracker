@@ -138,6 +138,8 @@ export interface VideoRow {
   order_index: number
   total_duration_seconds: number
   watched_duration_seconds: number
+  /** Exact playback position where user stopped — used for resume in Focus Mode */
+  last_position_seconds: number
   completed: boolean
   notes: string | null
   revision_needed: boolean
@@ -156,6 +158,7 @@ export interface VideoInsert {
   order_index?: number
   total_duration_seconds?: number
   watched_duration_seconds?: number
+  last_position_seconds?: number
   completed?: boolean
   notes?: string | null
   revision_needed?: boolean
@@ -170,6 +173,7 @@ export interface VideoUpdate {
   order_index?: number
   total_duration_seconds?: number
   watched_duration_seconds?: number
+  last_position_seconds?: number
   completed?: boolean
   notes?: string | null
   revision_needed?: boolean

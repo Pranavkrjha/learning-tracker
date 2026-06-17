@@ -50,6 +50,13 @@ export function AddPlaylistSection({
 
   const { addView } = useRecentlyViewed()
 
+  // ── Sync server state back into local state after router.refresh() ─────────
+  // router.refresh() triggers a server re-render and passes new initialPlaylists,
+  // but useState only reads the initial value once. This effect keeps them in sync.
+  useEffect(() => {
+    setPlaylists(initialPlaylists)
+  }, [initialPlaylists])
+
   // Track this course as recently viewed (with placeholder playlist info — updated when a playlist is opened)
   useEffect(() => {
     // Only store the course-level entry; playlist-level entries are added from the playlist page
@@ -112,7 +119,32 @@ export function AddPlaylistSection({
   }
 
   // ── After successful import/sync ──────────────────────────────────────────
-  function handleImportSuccess() {
+  // Accepts the result from the import action so we can optimistically append
+  // the new playlist card without waiting for router.refresh() to propagate.
+  function handleImportSuccess(newPlaylistId?: string, newPlaylistTitle?: string) {
+    // If this was a new playlist (not a sync into existing), append it to local state
+    // immediately so the card appears without page navigation.
+    if (newPlaylistId && newPlaylistTitle) {
+      const optimisticPlaylist = {
+        id: newPlaylistId,
+        course_id: courseId,
+        user_id: '',
+        title: newPlaylistTitle,
+        description: null,
+        order_index: playlists.length,
+        youtube_playlist_url: null,
+        playback_speed: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        progress: null,
+      } as any
+      setPlaylists(prev => {
+        // Avoid duplicates in case router.refresh() also updated the list
+        if (prev.some(p => p.id === newPlaylistId)) return prev
+        return [...prev, optimisticPlaylist]
+      })
+    }
+    // router.refresh() updates the server state (stats, counts) in the background
     router.refresh()
     toast.success('YouTube playlist imported!')
   }

@@ -13,10 +13,11 @@ import type { CreateVideoForm } from '@/lib/types'
 
 interface VideoTableProps {
   playlistId: string
+  courseSlug: string
   initialVideos?: import('@/lib/types').VideoRow[]
 }
 
-export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
+export function VideoTable({ playlistId, courseSlug, initialVideos }: VideoTableProps) {
   const {
     videos,
     loading,
@@ -162,9 +163,9 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                 <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-24 text-center">
                   Revs
                 </th>
-                {/* Watch — always visible, icon-only on mobile */}
+                {/* Focus Mode — always visible, icon-only on mobile */}
                 <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-14 text-center">
-                  Watch
+                  Focus
                 </th>
                 {/* Delete — invisible header, always present */}
                 <th className="py-2.5 pl-1 pr-3 w-8" />
@@ -179,6 +180,8 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                   isSaving={savingIds.has(video.id)}
                   isLastWatched={video.id === lastWatchedId}
                   rowRef={video.id === lastWatchedId ? lastWatchedRef : undefined}
+                  courseSlug={courseSlug}
+                  playlistId={playlistId}
                   onUpdate={updateVideo}
                   onToggleCompleted={toggleCompleted}
                   onToggleRevision={toggleRevision}

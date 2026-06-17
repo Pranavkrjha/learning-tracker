@@ -260,7 +260,7 @@ export default async function PlaylistPage({ params }: Props) {
 
       {/* Video Table */}
       <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
-        <VideoTable playlistId={playlistId} initialVideos={videos} />
+        <VideoTable playlistId={playlistId} courseSlug={slug} initialVideos={videos} />
       </div>
     </div>
   )

@@ -6,6 +6,8 @@ export interface ContinueLearningData {
   videoTitle: string
   watchedSeconds: number
   totalSeconds: number
+  /** Exact playback position for resume — distinct from watchedSeconds */
+  lastPositionSeconds: number
   progressPercent: number
   remainingSeconds: number
   playlistId: string
@@ -33,6 +35,7 @@ export async function getContinueLearning(): Promise<ContinueLearningData | null
       id,
       title,
       watched_duration_seconds,
+      last_position_seconds,
       total_duration_seconds,
       thumbnail_url,
       updated_at,
@@ -56,8 +59,6 @@ export async function getContinueLearning(): Promise<ContinueLearningData | null
     .maybeSingle()
 
   if (error || !data) {
-    // Fall back: find any in-progress video (even without watched time)
-    // by looking at playlists that have some completed videos but aren't fully done
     return null
   }
 
@@ -68,6 +69,7 @@ export async function getContinueLearning(): Promise<ContinueLearningData | null
 
   const watched = data.watched_duration_seconds ?? 0
   const total = data.total_duration_seconds ?? 0
+  const lastPos = data.last_position_seconds ?? 0
   const remaining = Math.max(0, total - watched)
   const percent = total > 0 ? Math.round((watched / total) * 100) : 0
 
@@ -76,6 +78,7 @@ export async function getContinueLearning(): Promise<ContinueLearningData | null
     videoTitle: data.title,
     watchedSeconds: watched,
     totalSeconds: total,
+    lastPositionSeconds: lastPos,
     progressPercent: percent,
     remainingSeconds: remaining,
     playlistId: playlist.id,

@@ -20,7 +20,8 @@ function YouTubeIcon({ className }: { className?: string }) {
 interface Props {
   open: boolean
   onClose: () => void
-  onSuccess: () => void
+  /** Called with the new/synced playlist's id and title on success */
+  onSuccess: (playlistId: string, playlistTitle: string) => void
   courseId: string
   /** If provided, sync into this playlist instead of creating a new one */
   existingPlaylistId?: string | null
@@ -76,9 +77,11 @@ export function ImportYouTubeModal({
   }
 
   function handleSuccessClose() {
+    const id = result?.playlistId ?? ''
+    const title = result?.playlistTitle ?? ''
     reset()
     onClose()
-    onSuccess()
+    onSuccess(id, title)
   }
 
   return (

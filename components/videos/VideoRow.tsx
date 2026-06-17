@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { Loader2, Trash2, ChevronDown, ChevronUp, ExternalLink, Minus, Plus, PlayCircle } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,9 @@ interface VideoRowProps {
   isSaving: boolean
   isLastWatched?: boolean
   rowRef?: React.Ref<HTMLTableRowElement>
+  /** Used to build the Focus Mode watch URL */
+  courseSlug: string
+  playlistId: string
   onUpdate: (id: string, data: UpdateVideoForm) => Promise<void>
   onToggleCompleted: (id: string) => Promise<void>
   onToggleRevision: (id: string) => Promise<void>
@@ -36,6 +40,8 @@ export function VideoTableRow({
   isSaving,
   isLastWatched = false,
   rowRef,
+  courseSlug,
+  playlistId,
   onUpdate,
   onToggleCompleted,
   onIncrementRevision,
@@ -309,19 +315,18 @@ export function VideoTableRow({
           </div>
         </td>
 
-        {/* Watch on YouTube — always visible (icon-only on mobile, icon+text on sm+) */}
+        {/* Watch — links to Focus Mode workspace (in-app) */}
         <td className="py-3 px-2 w-14 text-center">
           {video.youtube_video_id ? (
-            <button
+            <Link
               id={`watch-${video.id}`}
-              type="button"
-              onClick={openInYouTube}
-              className="inline-flex items-center justify-center gap-1 rounded px-1.5 py-1 text-[11px] font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-              title="Watch on YouTube"
+              href={`/course/${courseSlug}/playlist/${playlistId}/watch/${video.id}`}
+              className="inline-flex items-center justify-center gap-1 rounded px-1.5 py-1 text-[11px] font-medium text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors"
+              title="Watch in Focus Mode"
             >
-              <ExternalLink className="h-3 w-3" />
-              <span className="hidden sm:inline">Watch</span>
-            </button>
+              <PlayCircle className="h-3 w-3" />
+              <span className="hidden sm:inline">Focus</span>
+            </Link>
           ) : (
             <span className="text-border text-xs">—</span>
           )}
