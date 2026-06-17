@@ -163,19 +163,13 @@ Run the provided Supabase migrations:
 
 ## Version
 
-## Version
+**Current Release:** `v1.2.0`
 
-Current Release: **v1.1.0** 🚀
-
-### Highlights
-- Performance optimizations
-- Continue Learning dashboard
-- Enhanced Recently Viewed
-- Last Watched marker
-- Playlist analytics
-- Completion projections
-- Course insights
-
+| Version | Release |
+|----------|----------|
+| v1.2.0 | Focus Mode & Learning Continuity |
+| v1.1.0 | Performance & Dashboard Enhancements |
+| v1.0.0 | Initial Public Release |
 ---
 
 ## License
