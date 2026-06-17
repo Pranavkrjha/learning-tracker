@@ -102,12 +102,15 @@ Add screenshots here after deployment.
 
 ### Course View
 
-![Course View]()
+<img width="1645" height="922" alt="image" src="https://github.com/user-attachments/assets/b8ed48be-15ef-46f9-8a19-973d9a16ea9d" />
+
+
 
 ### Playlist View
 
-![Playlist View](<img width="1656" height="927" alt="image" src="https://github.com/user-attachments/assets/efec4957-d485-48a3-8001-5026244e9e3d" />
-)
+<img width="1765" height="927" alt="image" src="https://github.com/user-attachments/assets/fbefde60-7aa3-4163-b00d-3edc588ba22b" />
+
+
 
 ---
 
