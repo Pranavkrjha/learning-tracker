@@ -97,8 +97,7 @@ Add screenshots here after deployment.
 
 ### Dashboard
 
-![Dashboard(<img width="1686" height="922" alt="image" src="https://github.com/user-attachments/assets/f6b96bf5-3033-4c58-a7e4-ecf8f70874f2" />
-)
+<img width="1686" height="922" alt="image" src="https://github.com/user-attachments/assets/f6b96bf5-3033-4c58-a7e4-ecf8f70874f2" />
 
 ### Course View
 
