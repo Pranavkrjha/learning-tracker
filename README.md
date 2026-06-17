@@ -93,7 +93,6 @@ Perfect for:
 
 ## Screenshots
 
-Add screenshots here after deployment.
 
 ### Dashboard
 
