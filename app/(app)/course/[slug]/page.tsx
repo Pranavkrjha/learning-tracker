@@ -8,15 +8,6 @@ import { CircularProgress } from '@/components/shared/ProgressBar'
 import { AddPlaylistSection } from './AddPlaylistSection'
 import { formatDurationHuman } from '@/lib/utils'
 
-// Inline YouTube icon (lucide-react v1 doesn't export Youtube)
-function YouTubeIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-    </svg>
-  )
-}
-
 interface Props {
   params: Promise<{ slug: string }>
 }
@@ -110,28 +101,9 @@ export default async function CoursePage({ params }: Props) {
         </div>
       </div>
 
-      {/* Playlists Section */}
+      {/* Playlists Section — Import button is rendered inside AddPlaylistSection */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Playlists</h2>
-          <div className="flex items-center gap-2">
-            {/* YouTube import button — disabled until API key is configured */}
-            <button
-              id="import-youtube-btn"
-              className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/15 transition-colors cursor-not-allowed"
-              title="Add YOUTUBE_API_KEY to .env.local to enable"
-              disabled
-            >
-              <YouTubeIcon className="h-3.5 w-3.5" />
-              Import YouTube
-              <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide">
-                Soon
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* RecentlyViewed tracker — client-only, inlined as tiny script */}
+        <h2 className="text-lg font-semibold mb-1">Playlists</h2>
         <AddPlaylistSection
           courseId={course.id}
           courseSlug={course.slug}
