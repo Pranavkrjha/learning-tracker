@@ -55,6 +55,8 @@ export interface CourseRow {
   thumbnail_url: string | null
   color: string
   is_archived: boolean
+  is_favorite: boolean
+  is_pinned: boolean
   created_at: string
   updated_at: string
 }
@@ -68,6 +70,8 @@ export interface CourseInsert {
   thumbnail_url?: string | null
   color?: string
   is_archived?: boolean
+  is_favorite?: boolean
+  is_pinned?: boolean
   created_at?: string
   updated_at?: string
 }
@@ -79,6 +83,8 @@ export interface CourseUpdate {
   thumbnail_url?: string | null
   color?: string
   is_archived?: boolean
+  is_favorite?: boolean
+  is_pinned?: boolean
   updated_at?: string
 }
 
@@ -266,3 +272,38 @@ export interface CourseFilters {
 export type ProgressVariant = 'linear' | 'circular'
 export type ProgressSize = 'sm' | 'md' | 'lg'
 export type ThemeColor = 'indigo' | 'violet' | 'cyan' | 'emerald' | 'rose' | 'amber' | 'sky' | 'pink'
+export type ThemeName = 'dark' | 'light' | 'midnight-blue' | 'forest-green'
+
+// =============================================================================
+// IMPORT JOB TYPES (YouTube import)
+// =============================================================================
+export type ImportJobStatus = 'pending' | 'running' | 'done' | 'failed'
+
+export interface ImportJobRow {
+  id: string
+  user_id: string
+  playlist_id: string
+  status: ImportJobStatus
+  total_videos: number | null
+  imported_count: number
+  error_message: string | null
+  started_at: string | null
+  finished_at: string | null
+  created_at: string
+}
+
+export interface YouTubeVideoImport {
+  title: string
+  youtube_video_id: string
+  thumbnail_url: string | null
+  total_duration_seconds: number
+  order_index: number
+}
+
+export interface ImportResult {
+  jobId: string
+  status: ImportJobStatus
+  imported: number
+  total: number
+  errors?: string[]
+}

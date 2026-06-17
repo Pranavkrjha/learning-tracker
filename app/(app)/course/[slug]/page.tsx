@@ -72,7 +72,7 @@ export default async function CoursePage({ params }: Props) {
 
         <div className="relative flex flex-col sm:flex-row items-start gap-6">
           <div className="shrink-0">
-            <CircularProgress value={percent} size={96} strokeWidth={7} showLabel />
+            <CircularProgress value={percent} size={96} strokeWidth={7} showLabel color={course.color} />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -115,10 +115,11 @@ export default async function CoursePage({ params }: Props) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Playlists</h2>
           <div className="flex items-center gap-2">
+            {/* YouTube import button — disabled until API key is configured */}
             <button
               id="import-youtube-btn"
               className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/15 transition-colors cursor-not-allowed"
-              title="YouTube import coming soon"
+              title="Add YOUTUBE_API_KEY to .env.local to enable"
               disabled
             >
               <YouTubeIcon className="h-3.5 w-3.5" />
@@ -130,10 +131,13 @@ export default async function CoursePage({ params }: Props) {
           </div>
         </div>
 
+        {/* RecentlyViewed tracker — client-only, inlined as tiny script */}
         <AddPlaylistSection
           courseId={course.id}
           courseSlug={course.slug}
           initialPlaylists={playlists}
+          courseTitle={course.title}
+          courseColor={course.color}
         />
       </div>
     </div>

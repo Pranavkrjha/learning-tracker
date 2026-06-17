@@ -78,6 +78,7 @@ interface CircularProgressProps {
   size?: number // px
   strokeWidth?: number
   showLabel?: boolean
+  color?: string // optional override (e.g. course.color)
   className?: string
 }
 
@@ -86,6 +87,7 @@ export function CircularProgress({
   size = 80,
   strokeWidth = 6,
   showLabel = true,
+  color,
   className,
 }: CircularProgressProps) {
   const clamped = Math.min(100, Math.max(0, value))
@@ -93,7 +95,7 @@ export function CircularProgress({
   const circumference = radius * 2 * Math.PI
   const offset = circumference - (clamped / 100) * circumference
 
-  const strokeColor =
+  const strokeColor = color ?? (
     clamped >= 100
       ? '#10b981' // emerald
       : clamped >= 75
@@ -103,6 +105,7 @@ export function CircularProgress({
           : clamped >= 25
             ? '#eab308' // yellow
             : '#6366f1' // indigo
+  )
 
   return (
     <div

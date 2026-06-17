@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { GraduationCap, LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { ThemeToggle } from './ThemeToggle'
+import { ThemeSelector } from './ThemeSelector'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -64,7 +64,7 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          <ThemeSelector />
 
           <Button
             variant="ghost"

@@ -3,7 +3,6 @@
 @theme {
   --font-sans: 'Inter', 'system-ui', sans-serif;
 
-  /* shadcn CSS variable mappings for Tailwind v4 */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -26,51 +25,126 @@
   --radius: var(--radius-val, 0.75rem);
 }
 
-:root {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
-  --radius-val: 0.75rem;
-}
-
-.light {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
+/* ============================================================
+   THEME: Dark (default)
+   ============================================================ */
+:root,
+.dark {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 96%;
+  --card: 222 47% 8%;
+  --card-foreground: 210 40% 96%;
+  --popover: 222 47% 7%;
+  --popover-foreground: 210 40% 96%;
+  --primary: 224 76% 60%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
+  --secondary: 217 32% 16%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 217 32% 16%;
+  --muted-foreground: 215 20% 55%;
+  --accent: 217 32% 18%;
+  --accent-foreground: 210 40% 96%;
+  --destructive: 0 62% 50%;
   --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
+  --border: 217 32% 18%;
+  --input: 217 32% 18%;
+  --ring: 224 76% 60%;
+  --radius-val: 0.75rem;
+
+  /* Theme accent for gradient branding */
+  --theme-from: #6366f1;
+  --theme-to: #8b5cf6;
 }
 
+/* ============================================================
+   THEME: Light
+   ============================================================ */
+.light {
+  --background: 0 0% 98%;
+  --foreground: 222 47% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 8%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 94%;
+  --secondary-foreground: 222 47% 15%;
+  --muted: 210 40% 94%;
+  --muted-foreground: 215 16% 46%;
+  --accent: 210 40% 92%;
+  --accent-foreground: 222 47% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 31% 88%;
+  --input: 214 31% 88%;
+  --ring: 221 83% 53%;
+
+  --theme-from: #6366f1;
+  --theme-to: #8b5cf6;
+}
+
+/* ============================================================
+   THEME: Midnight Blue
+   Deep navy inspired by VS Code dark / midnight environments
+   ============================================================ */
+.midnight-blue {
+  --background: 224 71% 4%;
+  --foreground: 213 100% 96%;
+  --card: 224 64% 7%;
+  --card-foreground: 213 100% 96%;
+  --popover: 224 64% 6%;
+  --popover-foreground: 213 100% 96%;
+  --primary: 217 91% 65%;
+  --primary-foreground: 224 71% 4%;
+  --secondary: 218 60% 14%;
+  --secondary-foreground: 213 100% 96%;
+  --muted: 218 60% 14%;
+  --muted-foreground: 217 35% 55%;
+  --accent: 218 60% 16%;
+  --accent-foreground: 213 100% 96%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 218 60% 16%;
+  --input: 218 60% 16%;
+  --ring: 217 91% 65%;
+
+  --theme-from: #3b82f6;
+  --theme-to: #06b6d4;
+}
+
+/* ============================================================
+   THEME: Forest Green
+   Earthy dark green inspired by terminals / nature
+   ============================================================ */
+.forest-green {
+  --background: 158 47% 4%;
+  --foreground: 150 40% 94%;
+  --card: 158 42% 7%;
+  --card-foreground: 150 40% 94%;
+  --popover: 158 42% 6%;
+  --popover-foreground: 150 40% 94%;
+  --primary: 152 76% 48%;
+  --primary-foreground: 158 47% 4%;
+  --secondary: 155 35% 14%;
+  --secondary-foreground: 150 40% 94%;
+  --muted: 155 35% 14%;
+  --muted-foreground: 152 20% 52%;
+  --accent: 155 35% 16%;
+  --accent-foreground: 150 40% 94%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 155 35% 16%;
+  --input: 155 35% 16%;
+  --ring: 152 76% 48%;
+
+  --theme-from: #10b981;
+  --theme-to: #06b6d4;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
@@ -83,7 +157,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
+/* ============================================================
+   CUSTOM SCROLLBAR
+   ============================================================ */
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--border)) transparent;
@@ -103,26 +179,32 @@ html {
   border-radius: 9999px;
 }
 
-/* Glass morphism */
+/* ============================================================
+   GLASS MORPHISM
+   ============================================================ */
 .glass {
   backdrop-filter: blur(12px) saturate(180%);
   background-color: hsl(var(--background) / 0.7);
   border: 1px solid hsl(var(--border) / 0.5);
 }
 
-/* Gradient text */
+/* ============================================================
+   GRADIENT TEXT — uses per-theme CSS vars
+   ============================================================ */
 .gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--theme-from, #6366f1) 0%, var(--theme-to, #8b5cf6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Page transition animations */
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -132,12 +214,17 @@ html {
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
+  0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
 }
 
 .animate-fade-in-up {
@@ -152,19 +239,25 @@ html {
   background: linear-gradient(
     90deg,
     hsl(var(--muted)) 25%,
-    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted-foreground) / 0.08) 50%,
     hsl(var(--muted)) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.8s infinite;
 }
 
-/* Stagger animations for cards */
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 60ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 180ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 240ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 360ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+/* ============================================================
+   STAGGER CHILDREN
+   ============================================================ */
+.stagger-children > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2)  { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3)  { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4)  { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5)  { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6)  { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7)  { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8)  { animation-delay: 350ms; }
+.stagger-children > *:nth-child(9)  { animation-delay: 400ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+.stagger-children > *:nth-child(11) { animation-delay: 500ms; }
+.stagger-children > *:nth-child(12) { animation-delay: 550ms; }

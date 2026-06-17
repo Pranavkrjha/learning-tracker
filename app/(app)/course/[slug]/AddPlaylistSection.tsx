@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -8,20 +8,37 @@ import { PlaylistCard } from '@/components/playlists/PlaylistCard'
 import { AddPlaylistModal } from '@/components/playlists/AddPlaylistModal'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { createClient } from '@/lib/supabase/client'
+import { useRecentlyViewed } from '@/lib/hooks/useRecentlyViewed'
 import { toast } from 'sonner'
 import type { PlaylistRow, PlaylistWithProgress, CreatePlaylistForm } from '@/lib/types'
 
 interface Props {
   courseId: string
   courseSlug: string
+  courseTitle: string
+  courseColor: string
   initialPlaylists: PlaylistWithProgress[]
 }
 
-export function AddPlaylistSection({ courseId, courseSlug, initialPlaylists }: Props) {
+export function AddPlaylistSection({
+  courseId,
+  courseSlug,
+  courseTitle,
+  courseColor,
+  initialPlaylists,
+}: Props) {
   const router = useRouter()
   const [playlists, setPlaylists] = useState(initialPlaylists)
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const { addView } = useRecentlyViewed()
+
+  // Track this course as recently viewed
+  useEffect(() => {
+    addView({ courseId, courseSlug, title: courseTitle, color: courseColor })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId])
 
   async function handleAddPlaylist(form: CreatePlaylistForm) {
     setLoading(true)
@@ -76,7 +93,7 @@ export function AddPlaylistSection({ courseId, courseSlug, initialPlaylists }: P
         <EmptyState
           icon={BookOpen}
           title="No playlists yet"
-          description="Add a playlist to organize videos within this course."
+          description="Add a playlist to organize videos within this course. You can also link a YouTube playlist URL."
           action={
             <Button
               id="add-first-playlist-btn"
@@ -91,7 +108,7 @@ export function AddPlaylistSection({ courseId, courseSlug, initialPlaylists }: P
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 stagger-children">
-            {playlists.map((playlist, i) => (
+            {playlists.map((playlist) => (
               <PlaylistCard
                 key={playlist.id}
                 playlist={playlist}

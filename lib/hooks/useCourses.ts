@@ -100,6 +100,26 @@ export function useCourses() {
     await fetchCourses()
   }
 
+  const toggleFavorite = async (id: string): Promise<void> => {
+    const course = courses.find(c => c.id === id)
+    if (!course) return
+    const newVal = !course.is_favorite
+    // Optimistic
+    setCourses(prev => prev.map(c => c.id === id ? { ...c, is_favorite: newVal } : c))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('courses').update({ is_favorite: newVal }).eq('id', id)
+  }
+
+  const togglePin = async (id: string): Promise<void> => {
+    const course = courses.find(c => c.id === id)
+    if (!course) return
+    const newVal = !course.is_pinned
+    // Optimistic
+    setCourses(prev => prev.map(c => c.id === id ? { ...c, is_pinned: newVal } : c))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('courses').update({ is_pinned: newVal }).eq('id', id)
+  }
+
   const filteredCourses = courses.filter(course => {
     const matchSearch =
       filters.search === '' ||
@@ -117,6 +137,9 @@ export function useCourses() {
     return matchSearch && matchStatus
   })
 
+  // Derived stats
+  const totalPlaylists = courses.reduce((s, c) => s + (c.progress?.playlist_count ?? 0), 0)
+
   return {
     courses,
     filteredCourses,
@@ -124,8 +147,12 @@ export function useCourses() {
     error,
     filters,
     setFilters,
+    totalPlaylists,
     refetch: fetchCourses,
     createCourse,
     deleteCourse,
+    toggleFavorite,
+    togglePin,
   }
 }
+

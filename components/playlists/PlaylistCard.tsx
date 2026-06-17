@@ -123,13 +123,20 @@ export function PlaylistCard({ playlist, courseSlug, onDelete, className }: Play
             </span>
           </>
         )}
-        {watchedSeconds > 0 && watchedSeconds < totalSeconds && (
-          <>
-            <span className="text-border">•</span>
-            <span>{formatDurationHuman(totalSeconds - watchedSeconds)} left</span>
-          </>
-        )}
+        <span className="text-border">•</span>
+        <span className="font-medium text-foreground/70">{Math.round(percent)}%</span>
       </div>
+
+      {/* Import Now CTA for empty YouTube playlists */}
+      {playlist.youtube_playlist_url && totalVideos === 0 && (
+        <div className="flex items-center gap-2 rounded-lg bg-red-500/8 border border-red-500/20 px-3 py-2">
+          <YouTubeIcon className="h-3.5 w-3.5 text-red-400 shrink-0" />
+          <span className="text-xs text-red-400 flex-1">YouTube playlist linked — import videos</span>
+          <span className="text-[10px] rounded bg-red-500/15 text-red-400 px-1.5 py-0.5 font-bold uppercase tracking-wide">
+            Soon
+          </span>
+        </div>
+      )}
 
       {/* Progress */}
       <ProgressBar value={percent} size="sm" />

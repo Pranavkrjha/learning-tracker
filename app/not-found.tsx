@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { GraduationCap, Home } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 export default function NotFound() {
   return (
@@ -19,12 +18,13 @@ export default function NotFound() {
         <p className="text-muted-foreground mb-8 max-w-sm">
           This page doesn&apos;t exist or the course / playlist has been removed.
         </p>
-        <Button asChild className="bg-gradient-to-r from-indigo-500 to-violet-600 text-white border-0">
-          <Link href="/">
-            <Home className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Link>
-        </Button>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-700 transition-all"
+        >
+          <Home className="h-4 w-4" />
+          Back to Dashboard
+        </Link>
       </div>
     </div>
   )
