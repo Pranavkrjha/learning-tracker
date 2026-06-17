@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
-import type { VideoRow, VideoInsert, CreateVideoForm, UpdateVideoForm } from '@/lib/types'
+import { getAuthUser } from '@/lib/supabase/getUser'
+import type { VideoRow, CreateVideoForm, UpdateVideoForm } from '@/lib/types'
 
 export async function getVideosByPlaylist(playlistId: string): Promise<VideoRow[]> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data, error } = await supabase
     .from('videos')
@@ -19,8 +19,7 @@ export async function getVideosByPlaylist(playlistId: string): Promise<VideoRow[
 
 export async function getVideoById(id: string): Promise<VideoRow | null> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data, error } = await supabase
     .from('videos').select('*').eq('id', id).eq('user_id', user.id).maybeSingle()
@@ -31,8 +30,7 @@ export async function getVideoById(id: string): Promise<VideoRow | null> {
 
 export async function createVideo(playlistId: string, form: CreateVideoForm): Promise<VideoRow> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data: existing } = await supabase
     .from('videos').select('order_index').eq('playlist_id', playlistId)
@@ -59,8 +57,7 @@ export async function createVideo(playlistId: string, form: CreateVideoForm): Pr
 
 export async function updateVideo(id: string, update: UpdateVideoForm): Promise<VideoRow> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
@@ -72,8 +69,7 @@ export async function updateVideo(id: string, update: UpdateVideoForm): Promise<
 
 export async function toggleVideoCompleted(id: string, completed: boolean): Promise<VideoRow> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data: video } = await supabase
     .from('videos').select('total_duration_seconds').eq('id', id).maybeSingle()
@@ -94,8 +90,7 @@ export async function toggleVideoCompleted(id: string, completed: boolean): Prom
 
 export async function toggleRevisionNeeded(id: string, needed: boolean): Promise<VideoRow> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
@@ -108,8 +103,7 @@ export async function toggleRevisionNeeded(id: string, needed: boolean): Promise
 
 export async function deleteVideo(id: string): Promise<void> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { error } = await supabase.from('videos').delete().eq('id', id).eq('user_id', user.id)
   if (error) throw new Error(error.message)
@@ -117,8 +111,7 @@ export async function deleteVideo(id: string): Promise<void> {
 
 export async function reorderVideos(updates: { id: string; order_index: number }[]): Promise<void> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   await Promise.all(
     updates.map(({ id, order_index }) =>

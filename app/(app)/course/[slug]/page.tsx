@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronRight, BookOpen, Play, Clock } from 'lucide-react'
+import { ChevronRight, BookOpen, Play, Clock, CheckCircle, BarChart2 } from 'lucide-react'
 import type { Metadata } from 'next'
 import { getCourseBySlug } from '@/lib/services/courses'
 import { getPlaylistsByCourse } from '@/lib/services/playlists'
@@ -98,6 +98,45 @@ export default async function CoursePage({ params }: Props) {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Part G: Course Insights */}
+        <div className="mt-5 pt-4 border-t border-border/30 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+              <BookOpen className="h-3 w-3" /> Playlists
+            </span>
+            <span className="text-sm font-bold">{playlistCount}</span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+              <Play className="h-3 w-3" /> Total Videos
+            </span>
+            <span className="text-sm font-bold">{totalVideos}</span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+              <CheckCircle className="h-3 w-3 text-emerald-400" />
+              <span className="text-emerald-400">Completed</span>
+            </span>
+            <span className="text-sm font-bold text-emerald-400">{completedVideos}</span>
+          </div>
+          {totalSeconds > 0 && (
+            <>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> Total Hours
+                </span>
+                <span className="text-sm font-bold">{formatDurationHuman(totalSeconds)}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                  <BarChart2 className="h-3 w-3" /> Watched
+                </span>
+                <span className="text-sm font-bold">{formatDurationHuman(watchedSeconds)}</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

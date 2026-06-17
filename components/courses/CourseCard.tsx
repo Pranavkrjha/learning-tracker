@@ -100,10 +100,9 @@ export function CourseCard({
             )}
           </div>
 
-          {/* Title — stop propagation so clicking text doesn't double-fire */}
+          {/* Title — navigates with the card, no stopPropagation needed */}
           <p
             className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors"
-            onClick={stopNav}
           >
             {course.title}
           </p>

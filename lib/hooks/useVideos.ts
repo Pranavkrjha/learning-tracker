@@ -1,16 +1,18 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { VideoRow, CreateVideoForm, UpdateVideoForm } from '@/lib/types'
 
-export function useVideos(playlistId: string) {
-  const [videos, setVideos] = useState<VideoRow[]>([])
-  const [loading, setLoading] = useState(true)
+export function useVideos(playlistId: string, initialVideos?: VideoRow[]) {
+  const [videos, setVideos] = useState<VideoRow[]>(initialVideos ?? [])
+  const [loading, setLoading] = useState(!initialVideos || initialVideos.length === 0)
   const [error, setError] = useState<string | null>(null)
   const [savingIds, setSavingIds] = useState<Set<string>>(new Set())
 
-  const supabase = createClient()
+  // Stable supabase client ref — created once, not per-render
+  const supabaseRef = useRef(createClient())
+  const supabase = supabaseRef.current
 
   const fetchVideos = useCallback(async () => {
     if (!playlistId) return
@@ -34,11 +36,14 @@ export function useVideos(playlistId: string) {
     } finally {
       setLoading(false)
     }
-  }, [playlistId])
+  }, [playlistId, supabase])
 
+  // Only auto-fetch if we didn't receive initialVideos from the server
   useEffect(() => {
-    fetchVideos()
-  }, [fetchVideos])
+    if (!initialVideos || initialVideos.length === 0) {
+      fetchVideos()
+    }
+  }, [fetchVideos, initialVideos])
 
   const addVideo = async (form: CreateVideoForm): Promise<void> => {
     const { data: { user } } = await supabase.auth.getUser()

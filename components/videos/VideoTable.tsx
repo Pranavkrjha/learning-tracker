@@ -1,7 +1,7 @@
 'use client'
 
 import { Plus, Video } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { VideoTableRow } from './VideoRow'
 import { AddVideoModal } from './AddVideoModal'
 import { Button } from '@/components/ui/button'
@@ -29,9 +29,28 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
     incrementRevision,
     decrementRevision,
     deleteVideo,
-  } = useVideos(playlistId)
+  } = useVideos(playlistId, initialVideos)
 
   const [showAddModal, setShowAddModal] = useState(false)
+  const [lastWatchedId, setLastWatchedId] = useState<string | null>(null)
+  const lastWatchedRef = useRef<HTMLTableRowElement | null>(null)
+
+  // Read last watched video from sessionStorage (set by PlaylistViewTracker)
+  useEffect(() => {
+    try {
+      const id = sessionStorage.getItem(`last_watched_${playlistId}`)
+      if (id) setLastWatchedId(id)
+    } catch {}
+  }, [playlistId])
+
+  // Scroll to last watched row once videos are loaded
+  useEffect(() => {
+    if (lastWatchedRef.current && !loading) {
+      setTimeout(() => {
+        lastWatchedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 300)
+    }
+  }, [lastWatchedId, loading])
 
   const displayVideos = videos.length > 0 ? videos : (initialVideos ?? [])
 
@@ -148,6 +167,8 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                   video={video}
                   index={idx}
                   isSaving={savingIds.has(video.id)}
+                  isLastWatched={video.id === lastWatchedId}
+                  rowRef={video.id === lastWatchedId ? lastWatchedRef : undefined}
                   onUpdate={updateVideo}
                   onToggleCompleted={toggleCompleted}
                   onToggleRevision={toggleRevision}

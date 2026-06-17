@@ -50,9 +50,19 @@ export function AddPlaylistSection({
 
   const { addView } = useRecentlyViewed()
 
-  // Track this course as recently viewed
+  // Track this course as recently viewed (with placeholder playlist info — updated when a playlist is opened)
   useEffect(() => {
-    addView({ courseId, courseSlug, title: courseTitle, color: courseColor })
+    // Only store the course-level entry; playlist-level entries are added from the playlist page
+    addView({
+      courseId,
+      courseSlug,
+      courseTitle,
+      courseColor,
+      playlistId: playlists[0]?.id ?? courseId,
+      playlistTitle: playlists[0]?.title ?? 'No playlists yet',
+      videoId: null,
+      videoTitle: null,
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId])
 

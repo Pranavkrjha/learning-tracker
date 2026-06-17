@@ -2,14 +2,18 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-const KEY = 'learntrack_recently_viewed'
-const MAX = 5
+const KEY = 'learntrack_recently_viewed_v2'
+const MAX = 10
 
 export interface RecentlyViewedItem {
   courseId: string
   courseSlug: string
-  title: string
-  color: string
+  courseTitle: string
+  courseColor: string
+  playlistId: string
+  playlistTitle: string
+  videoId: string | null
+  videoTitle: string | null
   viewedAt: number
 }
 
@@ -27,7 +31,9 @@ export function useRecentlyViewed() {
 
   const addView = useCallback((item: Omit<RecentlyViewedItem, 'viewedAt'>) => {
     setItems(prev => {
-      const filtered = prev.filter(i => i.courseId !== item.courseId)
+      // Deduplicate by playlistId (not courseId) so different playlists in the same
+      // course each get their own entry
+      const filtered = prev.filter(i => i.playlistId !== item.playlistId)
       const next = [{ ...item, viewedAt: Date.now() }, ...filtered].slice(0, MAX)
       try { localStorage.setItem(KEY, JSON.stringify(next)) } catch {}
       return next

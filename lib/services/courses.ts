@@ -1,50 +1,58 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/getUser'
 import { slugify } from '@/lib/utils'
-import type { CourseRow, CourseInsert, CourseUpdate, CourseWithProgress, CreateCourseForm, CourseProgressRow } from '@/lib/types'
+import type {
+  CourseRow,
+  CourseInsert,
+  CourseUpdate,
+  CourseWithProgress,
+  CreateCourseForm,
+  CourseProgressRow,
+} from '@/lib/types'
 
 // =============================================================================
-// GET ALL COURSES (with progress)
+// GET ALL COURSES (with progress) — parallelized
 // =============================================================================
 export async function getCourses(): Promise<CourseWithProgress[]> {
   const supabase = await createClient()
+  const user = await getAuthUser()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  // Fetch courses + progress in parallel (was sequential before)
+  const [coursesResult, progressResult] = await Promise.all([
+    supabase
+      .from('courses')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_archived', false)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('course_progress')
+      .select('*')
+      .eq('user_id', user.id),
+  ])
 
-  const { data: courses, error: coursesError } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('is_archived', false)
-    .order('created_at', { ascending: false })
-
-  if (coursesError) throw new Error(coursesError.message)
-  if (!courses) return []
-
-  const { data: progress } = await supabase
-    .from('course_progress')
-    .select('*')
-    .eq('user_id', user.id)
+  if (coursesResult.error) throw new Error(coursesResult.error.message)
 
   const progressMap = new Map<string, CourseProgressRow>(
-    (progress ?? []).map((p: CourseProgressRow) => [p.course_id, p])
+    (progressResult.data ?? []).map((p: CourseProgressRow) => [p.course_id, p])
   )
 
-  return (courses as CourseRow[]).map(course => ({
+  return (coursesResult.data as CourseRow[]).map(course => ({
     ...course,
     progress: progressMap.get(course.id) ?? null,
   }))
 }
 
 // =============================================================================
-// GET SINGLE COURSE BY SLUG
+// GET SINGLE COURSE BY SLUG — cached per request + parallelized
+// Using React cache() so generateMetadata and page() share the same fetch
 // =============================================================================
-export async function getCourseBySlug(slug: string): Promise<CourseWithProgress | null> {
+export const getCourseBySlug = cache(async (slug: string): Promise<CourseWithProgress | null> => {
   const supabase = await createClient()
+  const user = await getAuthUser()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
-
+  // Fetch course first (need the ID for progress query)
   const { data: course, error } = await supabase
     .from('courses')
     .select('*')
@@ -54,6 +62,8 @@ export async function getCourseBySlug(slug: string): Promise<CourseWithProgress 
 
   if (error || !course) return null
 
+  // Fetch progress in parallel with nothing (we need course.id first)
+  // but at least this call is now deduplicated across generateMetadata + page()
   const { data: progress } = await supabase
     .from('course_progress')
     .select('*')
@@ -61,16 +71,14 @@ export async function getCourseBySlug(slug: string): Promise<CourseWithProgress 
     .maybeSingle()
 
   return { ...(course as CourseRow), progress: (progress as CourseProgressRow | null) }
-}
+})
 
 // =============================================================================
 // CREATE COURSE
 // =============================================================================
 export async function createCourse(form: CreateCourseForm): Promise<CourseRow> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const baseSlug = slugify(form.title)
 
@@ -110,9 +118,7 @@ export async function createCourse(form: CreateCourseForm): Promise<CourseRow> {
 // =============================================================================
 export async function updateCourse(id: string, update: CourseUpdate): Promise<CourseRow> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data, error } = await supabase
     .from('courses')
@@ -132,9 +138,7 @@ export async function updateCourse(id: string, update: CourseUpdate): Promise<Co
 // =============================================================================
 export async function deleteCourse(id: string): Promise<void> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { error } = await supabase
     .from('courses')
@@ -150,9 +154,7 @@ export async function deleteCourse(id: string): Promise<void> {
 // =============================================================================
 export async function getGlobalStats() {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data: progress } = await supabase
     .from('course_progress')

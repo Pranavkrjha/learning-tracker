@@ -1,4 +1,6 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/getUser'
 import type {
   PlaylistRow,
   PlaylistInsert,
@@ -9,13 +11,11 @@ import type {
 } from '@/lib/types'
 
 // =============================================================================
-// GET PLAYLISTS FOR A COURSE (with progress)
+// GET PLAYLISTS FOR A COURSE (with progress) — parallelized
 // =============================================================================
 export async function getPlaylistsByCourse(courseId: string): Promise<PlaylistWithProgress[]> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data: playlists, error } = await supabase
     .from('playlists')
@@ -45,33 +45,35 @@ export async function getPlaylistsByCourse(courseId: string): Promise<PlaylistWi
 }
 
 // =============================================================================
-// GET SINGLE PLAYLIST BY ID
+// GET SINGLE PLAYLIST BY ID — cached per request + parallelized
+// Using React cache() so generateMetadata and page() share the same fetch
 // =============================================================================
-export async function getPlaylistById(id: string): Promise<PlaylistWithProgress | null> {
+export const getPlaylistById = cache(async (id: string): Promise<PlaylistWithProgress | null> => {
   const supabase = await createClient()
+  const user = await getAuthUser()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  // Fetch playlist + progress in parallel
+  const [playlistResult, progressResult] = await Promise.all([
+    supabase
+      .from('playlists')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('playlist_progress')
+      .select('*')
+      .eq('playlist_id', id)
+      .maybeSingle(),
+  ])
 
-  const { data: playlist, error } = await supabase
-    .from('playlists')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .maybeSingle()
+  if (playlistResult.error || !playlistResult.data) return null
 
-  if (error || !playlist) return null
-
-  const typedPlaylist = playlist as PlaylistRow
-
-  const { data: progress } = await supabase
-    .from('playlist_progress')
-    .select('*')
-    .eq('playlist_id', id)
-    .maybeSingle()
-
-  return { ...typedPlaylist, progress: (progress as PlaylistProgressRow | null) }
-}
+  return {
+    ...(playlistResult.data as PlaylistRow),
+    progress: (progressResult.data as PlaylistProgressRow | null),
+  }
+})
 
 // =============================================================================
 // CREATE PLAYLIST
@@ -81,9 +83,7 @@ export async function createPlaylist(
   form: CreatePlaylistForm
 ): Promise<PlaylistRow> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data: existing } = await supabase
     .from('playlists')
@@ -120,9 +120,7 @@ export async function createPlaylist(
 // =============================================================================
 export async function updatePlaylist(id: string, update: PlaylistUpdate): Promise<PlaylistRow> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { data, error } = await supabase
     .from('playlists')
@@ -142,9 +140,7 @@ export async function updatePlaylist(id: string, update: PlaylistUpdate): Promis
 // =============================================================================
 export async function deletePlaylist(id: string): Promise<void> {
   const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const user = await getAuthUser()
 
   const { error } = await supabase
     .from('playlists')

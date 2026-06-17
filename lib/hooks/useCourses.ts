@@ -1,8 +1,15 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { CourseWithProgress, CreateCourseForm, CourseFilters, FilterStatus, CourseRow, CourseProgressRow } from '@/lib/types'
+import type {
+  CourseWithProgress,
+  CreateCourseForm,
+  CourseFilters,
+  FilterStatus,
+  CourseRow,
+  CourseProgressRow,
+} from '@/lib/types'
 import { matchesFilterStatus } from '@/lib/utils'
 
 export function useCourses() {
@@ -11,7 +18,9 @@ export function useCourses() {
   const [error, setError] = useState<string | null>(null)
   const [filters, setFilters] = useState<CourseFilters>({ search: '', status: 'all' })
 
-  const supabase = createClient()
+  // Stable supabase client ref — created once, not per-render
+  const supabaseRef = useRef(createClient())
+  const supabase = supabaseRef.current
 
   const fetchCourses = useCallback(async () => {
     setLoading(true)
@@ -20,24 +29,26 @@ export function useCourses() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { data: rawCourses, error: courseErr } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_archived', false)
-        .order('created_at', { ascending: false })
+      // Fetch courses + progress in parallel
+      const [coursesResult, progressResult] = await Promise.all([
+        supabase
+          .from('courses')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_archived', false)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('course_progress')
+          .select('*')
+          .eq('user_id', user.id),
+      ])
 
-      if (courseErr) throw new Error(courseErr.message)
+      if (coursesResult.error) throw new Error(coursesResult.error.message)
 
-      const typedCourses = (rawCourses ?? []) as CourseRow[]
-
-      const { data: progress } = await supabase
-        .from('course_progress')
-        .select('*')
-        .eq('user_id', user.id)
+      const typedCourses = (coursesResult.data ?? []) as CourseRow[]
 
       const progressMap = new Map<string, CourseProgressRow>(
-        (progress ?? []).map((p: CourseProgressRow) => [p.course_id, p])
+        (progressResult.data ?? []).map((p: CourseProgressRow) => [p.course_id, p])
       )
 
       setCourses(
@@ -51,7 +62,7 @@ export function useCourses() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     fetchCourses()
@@ -97,14 +108,13 @@ export function useCourses() {
   const deleteCourse = async (id: string): Promise<void> => {
     const { error } = await supabase.from('courses').delete().eq('id', id)
     if (error) throw new Error(error.message)
-    await fetchCourses()
+    setCourses(prev => prev.filter(c => c.id !== id))
   }
 
   const toggleFavorite = async (id: string): Promise<void> => {
     const course = courses.find(c => c.id === id)
     if (!course) return
     const newVal = !course.is_favorite
-    // Optimistic
     setCourses(prev => prev.map(c => c.id === id ? { ...c, is_favorite: newVal } : c))
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any).from('courses').update({ is_favorite: newVal }).eq('id', id)
@@ -114,7 +124,6 @@ export function useCourses() {
     const course = courses.find(c => c.id === id)
     if (!course) return
     const newVal = !course.is_pinned
-    // Optimistic
     setCourses(prev => prev.map(c => c.id === id ? { ...c, is_pinned: newVal } : c))
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any).from('courses').update({ is_pinned: newVal }).eq('id', id)
@@ -137,7 +146,6 @@ export function useCourses() {
     return matchSearch && matchStatus
   })
 
-  // Derived stats
   const totalPlaylists = courses.reduce((s, c) => s + (c.progress?.playlist_count ?? 0), 0)
 
   return {
@@ -155,4 +163,3 @@ export function useCourses() {
     togglePin,
   }
 }
-

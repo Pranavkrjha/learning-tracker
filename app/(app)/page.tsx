@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Plus, GraduationCap, BookOpen, Play, Clock, Percent, Pin, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatsCard } from '@/components/shared/StatsCard'
@@ -11,12 +11,17 @@ import { EmptyState } from '@/components/shared/EmptyState'
 import { AddCourseModal } from '@/components/courses/AddCourseModal'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCourses } from '@/lib/hooks/useCourses'
-import { useRecentlyViewed } from '@/lib/hooks/useRecentlyViewed'
+import { RecentlyViewedSection } from '@/components/dashboard/RecentlyViewedSection'
 import { formatDurationHuman } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { CreateCourseForm } from '@/lib/types'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
+
+// Continue Learning is loaded lazily — only shown if data exists
+import dynamic from 'next/dynamic'
+const ContinueLearningBannerAsync = dynamic(
+  () => import('@/components/dashboard/ContinueLearningFetcher').then(m => m.ContinueLearningFetcher),
+  { ssr: false }
+)
 
 function CourseCardSkeleton() {
   return (
@@ -56,10 +61,7 @@ export default function HomePage() {
     togglePin,
   } = useCourses()
 
-  const { items: recentItems } = useRecentlyViewed()
   const [showAddModal, setShowAddModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
 
   // Derived global stats
   const totalVideos    = courses.reduce((s, c) => s + (c.progress?.total_videos ?? 0), 0)
@@ -71,14 +73,6 @@ export default function HomePage() {
   // Split pinned vs unpinned
   const pinnedCourses   = filteredCourses.filter(c => c.is_pinned)
   const unpinnedCourses = filteredCourses.filter(c => !c.is_pinned)
-
-  // Recently viewed (match against loaded courses)
-  const recentCourses = mounted
-    ? recentItems
-        .map(r => courses.find(c => c.id === r.courseId))
-        .filter(Boolean)
-        .slice(0, 4)
-    : []
 
   async function handleAddCourse(form: CreateCourseForm) {
     try {
@@ -168,39 +162,11 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* Recently Viewed */}
-      {mounted && recentCourses.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Recently Viewed
-            </h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {recentCourses.map(c => c && (
-              <Link
-                key={c.id}
-                href={`/course/${c.slug}`}
-                className={cn(
-                  'flex items-center gap-2 rounded-xl border border-border/50 bg-card/50 px-3 py-2',
-                  'text-sm font-medium transition-all hover:border-border hover:bg-card/80',
-                  'hover:shadow-md hover:-translate-y-0.5'
-                )}
-              >
-                <div
-                  className="h-2.5 w-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: c.color }}
-                />
-                <span className="max-w-[160px] truncate">{c.title}</span>
-                <span className="text-xs text-muted-foreground shrink-0">
-                  {Math.round(c.progress?.progress_percent ?? 0)}%
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Continue Learning — renders its own section only when data exists */}
+      {!loading && courses.length > 0 && <ContinueLearningBannerAsync />}
+
+      {/* Recently Viewed — client-side from localStorage */}
+      <RecentlyViewedSection />
 
       {/* Favourites section */}
       {courses.some(c => c.is_favorite) && (
@@ -258,7 +224,7 @@ export default function HomePage() {
           description={
             courses.length === 0
               ? 'Create your first course to start tracking your learning journey.'
-              : 'Try adjusting your search or filter to find what you\'re looking for.'
+              : "Try adjusting your search or filter to find what you're looking for."
           }
           action={
             courses.length === 0 ? (

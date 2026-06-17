@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Check, Loader2, Trash2, ChevronDown, ChevronUp, ExternalLink, Minus, Plus } from 'lucide-react'
+import { Loader2, Trash2, ChevronDown, ChevronUp, ExternalLink, Minus, Plus, PlayCircle } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -20,6 +20,8 @@ interface VideoRowProps {
   video: VideoRow
   index: number
   isSaving: boolean
+  isLastWatched?: boolean
+  rowRef?: React.Ref<HTMLTableRowElement>
   onUpdate: (id: string, data: UpdateVideoForm) => Promise<void>
   onToggleCompleted: (id: string) => Promise<void>
   onToggleRevision: (id: string) => Promise<void>
@@ -32,6 +34,8 @@ export function VideoTableRow({
   video,
   index,
   isSaving,
+  isLastWatched = false,
+  rowRef,
   onUpdate,
   onToggleCompleted,
   onIncrementRevision,
@@ -89,17 +93,22 @@ export function VideoTableRow({
   return (
     <>
       <tr
+        ref={rowRef as React.Ref<HTMLTableRowElement>}
         className={cn(
           'group border-b border-border/30 transition-colors',
           video.completed
             ? 'bg-emerald-500/[0.03]'
             : 'hover:bg-secondary/30',
-          revCount > 0 && !video.completed && 'bg-amber-500/[0.03]'
+          revCount > 0 && !video.completed && 'bg-amber-500/[0.03]',
+          isLastWatched && !video.completed && 'bg-primary/[0.04] ring-1 ring-inset ring-primary/20'
         )}
       >
         {/* S.No */}
         <td className="py-3 pl-4 pr-2 text-xs text-muted-foreground w-10 tabular-nums">
-          {index + 1}
+          {isLastWatched && !video.completed
+            ? <PlayCircle className="h-3.5 w-3.5 text-primary" />
+            : index + 1
+          }
         </td>
 
         {/* Video Name + Thumbnail */}
@@ -157,6 +166,12 @@ export function VideoTableRow({
               >
                 {video.title}
               </p>
+              {isLastWatched && !video.completed && (
+                <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-primary bg-primary/10 border border-primary/20 rounded px-1.5 py-0.5">
+                  <PlayCircle className="h-2.5 w-2.5" />
+                  Continue Here
+                </span>
+              )}
               {video.total_duration_seconds > 0 && !video.completed && (
                 <div className="mt-1 flex items-center gap-2">
                   <ProgressBar value={progress} size="sm" className="max-w-[100px]" />
