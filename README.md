@@ -163,11 +163,18 @@ Run the provided Supabase migrations:
 
 ## Version
 
-Current Release:
+## Version
 
-```text
-v1.0.0
-```
+Current Release: **v1.1.0** 🚀
+
+### Highlights
+- Performance optimizations
+- Continue Learning dashboard
+- Enhanced Recently Viewed
+- Last Watched marker
+- Playlist analytics
+- Completion projections
+- Course insights
 
 ---
 
