@@ -100,6 +100,20 @@ export function useVideos(playlistId: string) {
     await updateVideo(id, { revision_needed: !video.revision_needed })
   }
 
+  const incrementRevision = async (id: string): Promise<void> => {
+    const video = videos.find(v => v.id === id)
+    if (!video) return
+    const newCount = (video.revision_count ?? 0) + 1
+    await updateVideo(id, { revision_count: newCount, revision_needed: newCount > 0 })
+  }
+
+  const decrementRevision = async (id: string): Promise<void> => {
+    const video = videos.find(v => v.id === id)
+    if (!video) return
+    const newCount = Math.max(0, (video.revision_count ?? 0) - 1)
+    await updateVideo(id, { revision_count: newCount, revision_needed: newCount > 0 })
+  }
+
   const deleteVideo = async (id: string): Promise<void> => {
     const { error } = await supabase.from('videos').delete().eq('id', id)
     if (error) throw new Error(error.message)
@@ -116,6 +130,9 @@ export function useVideos(playlistId: string) {
     updateVideo,
     toggleCompleted,
     toggleRevision,
+    incrementRevision,
+    decrementRevision,
     deleteVideo,
   }
 }
+

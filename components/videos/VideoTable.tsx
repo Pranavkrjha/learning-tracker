@@ -26,6 +26,8 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
     updateVideo,
     toggleCompleted,
     toggleRevision,
+    incrementRevision,
+    decrementRevision,
     deleteVideo,
   } = useVideos(playlistId)
 
@@ -37,7 +39,7 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
     try {
       await addVideo(form)
       toast.success('Video added successfully')
-    } catch (err) {
+    } catch {
       toast.error('Failed to add video')
     }
   }
@@ -55,7 +57,7 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
     return (
       <div className="space-y-2 p-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+          <Skeleton key={i} className="h-14 w-full rounded-lg" />
         ))}
       </div>
     )
@@ -113,7 +115,7 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                   #
                 </th>
                 <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-                  Video Name
+                  Video
                 </th>
                 <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 hidden sm:table-cell">
                   Total
@@ -124,14 +126,17 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                 <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 hidden lg:table-cell">
                   Remaining
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-20 text-center">
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-16 text-center">
                   Done
                 </th>
                 <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide hidden xl:table-cell">
                   Notes
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-20 text-center">
-                  Revise
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 text-center">
+                  Revisions
+                </th>
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-16 text-center hidden sm:table-cell">
+                  Watch
                 </th>
                 <th className="py-2.5 pl-2 pr-4 w-10" />
               </tr>
@@ -146,6 +151,8 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
                   onUpdate={updateVideo}
                   onToggleCompleted={toggleCompleted}
                   onToggleRevision={toggleRevision}
+                  onIncrementRevision={incrementRevision}
+                  onDecrementRevision={decrementRevision}
                   onDelete={handleDelete}
                 />
               ))}

@@ -100,6 +100,7 @@ export interface PlaylistRow {
   description: string | null
   order_index: number
   youtube_playlist_url: string | null
+  playback_speed: number
   created_at: string
   updated_at: string
 }
@@ -121,6 +122,7 @@ export interface PlaylistUpdate {
   description?: string | null
   order_index?: number
   youtube_playlist_url?: string | null
+  playback_speed?: number
   updated_at?: string
 }
 
@@ -139,6 +141,7 @@ export interface VideoRow {
   completed: boolean
   notes: string | null
   revision_needed: boolean
+  revision_count: number
   youtube_video_id: string | null
   thumbnail_url: string | null
   created_at: string
@@ -170,6 +173,7 @@ export interface VideoUpdate {
   completed?: boolean
   notes?: string | null
   revision_needed?: boolean
+  revision_count?: number
   youtube_video_id?: string | null
   thumbnail_url?: string | null
   updated_at?: string
@@ -256,6 +260,7 @@ export interface UpdateVideoForm {
   completed?: boolean
   notes?: string
   revision_needed?: boolean
+  revision_count?: number
 }
 
 // =============================================================================

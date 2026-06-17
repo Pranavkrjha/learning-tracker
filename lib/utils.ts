@@ -168,3 +168,29 @@ export function generateInitials(title: string): string {
     .map(word => word[0]?.toUpperCase() ?? '')
     .join('')
 }
+
+// =============================================================================
+// PLAYBACK SPEED UTILITIES (Phase 2)
+// =============================================================================
+
+export const PLAYBACK_SPEEDS = [1.00, 1.25, 1.50, 1.75, 2.00] as const
+export type PlaybackSpeed = typeof PLAYBACK_SPEEDS[number]
+
+/**
+ * Returns effective duration in seconds after applying playback speed.
+ * e.g. 3600s at 1.75x = 2057s
+ */
+export function effectiveDuration(seconds: number, speed: number): number {
+  if (speed <= 0) return seconds
+  return Math.round(seconds / speed)
+}
+
+/**
+ * How many days to finish `remainingSeconds` at `hoursPerDay` pace.
+ * Returns ceiling, minimum 1 if there's anything left.
+ */
+export function calcFinishDays(remainingSeconds: number, hoursPerDay: number): number {
+  if (remainingSeconds <= 0 || hoursPerDay <= 0) return 0
+  const secondsPerDay = hoursPerDay * 3600
+  return Math.ceil(remainingSeconds / secondsPerDay)
+}
