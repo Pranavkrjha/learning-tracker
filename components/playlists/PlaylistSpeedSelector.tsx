@@ -41,12 +41,17 @@ export function PlaylistSpeedSelector({ playlistId, initialSpeed }: PlaylistSpee
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+    // Outer container: the Gauge icon + label, then scrollable pill row
+    <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center gap-1 shrink-0 text-xs text-muted-foreground">
         <Gauge className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">Speed:</span>
       </div>
-      <div className="flex items-center gap-1">
+      {/*
+        On mobile: overflow-x-auto lets the speed buttons scroll horizontally
+        within the available width rather than wrapping onto a new line.
+      */}
+      <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pb-0.5">
         {PLAYBACK_SPEEDS.map((s) => (
           <button
             key={s}
@@ -55,7 +60,7 @@ export function PlaylistSpeedSelector({ playlistId, initialSpeed }: PlaylistSpee
             onClick={() => handleSpeedChange(s)}
             disabled={isPending}
             className={cn(
-              'h-7 px-2 rounded text-xs font-medium transition-all',
+              'h-7 px-2 rounded text-xs font-medium transition-all shrink-0',
               speed === s
                 ? 'bg-primary text-primary-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary border border-transparent hover:border-border/50'

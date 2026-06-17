@@ -33,7 +33,9 @@ export function RecentlyViewedSection() {
               className={cn(
                 'flex flex-col gap-1 rounded-xl border border-border/50 bg-card/50 px-3 py-2.5',
                 'text-sm transition-all hover:border-border hover:bg-card/80',
-                'hover:shadow-md hover:-translate-y-0.5 max-w-[220px]'
+                'hover:shadow-md hover:-translate-y-0.5',
+                // Always show 2 per row on any screen width, up to 220px on larger screens
+                'min-w-[148px] max-w-[calc(50%-4px)] sm:max-w-[220px] flex-1'
               )}
             >
               {/* Course name */}

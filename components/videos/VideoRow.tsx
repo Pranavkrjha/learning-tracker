@@ -104,7 +104,7 @@ export function VideoTableRow({
         )}
       >
         {/* S.No */}
-        <td className="py-3 pl-4 pr-2 text-xs text-muted-foreground w-10 tabular-nums">
+        <td className="py-3 pl-4 pr-2 text-xs text-muted-foreground w-8 tabular-nums">
           {isLastWatched && !video.completed
             ? <PlayCircle className="h-3.5 w-3.5 text-primary" />
             : index + 1
@@ -112,15 +112,16 @@ export function VideoTableRow({
         </td>
 
         {/* Video Name + Thumbnail */}
-        <td className="py-2 px-3 min-w-0">
-          <div className="flex items-center gap-3">
-            {/* Thumbnail */}
+        <td className="py-2 px-2 min-w-0">
+          <div className="flex items-center gap-2">
+            {/* Thumbnail — also acts as Watch button on mobile */}
             {video.thumbnail_url ? (
               <div
                 className={cn(
-                  'relative shrink-0 rounded overflow-hidden cursor-pointer',
-                  'w-16 h-9 sm:w-20 sm:h-[45px]',
-                  'ring-1 ring-border/50 hover:ring-primary/50 transition-all'
+                  'relative shrink-0 rounded overflow-hidden',
+                  'w-14 h-8 sm:w-20 sm:h-[45px]',
+                  'ring-1 ring-border/50 transition-all',
+                  video.youtube_video_id && 'cursor-pointer hover:ring-primary/50'
                 )}
                 onClick={video.youtube_video_id ? openInYouTube : undefined}
                 title={video.youtube_video_id ? 'Watch on YouTube' : undefined}
@@ -145,7 +146,7 @@ export function VideoTableRow({
             ) : video.youtube_video_id ? (
               /* Placeholder when no thumbnail but has YouTube ID */
               <div
-                className="shrink-0 w-16 h-9 sm:w-20 sm:h-[45px] rounded bg-secondary/60 ring-1 ring-border/50 flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors"
+                className="shrink-0 w-14 h-8 sm:w-20 sm:h-[45px] rounded bg-secondary/60 ring-1 ring-border/50 flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors"
                 onClick={openInYouTube}
                 title="Watch on YouTube"
               >
@@ -155,7 +156,7 @@ export function VideoTableRow({
               </div>
             ) : null}
 
-            {/* Title + mini progress bar */}
+            {/* Title + meta */}
             <div className="flex-1 min-w-0">
               <p
                 className={cn(
@@ -174,7 +175,7 @@ export function VideoTableRow({
               )}
               {video.total_duration_seconds > 0 && !video.completed && (
                 <div className="mt-1 flex items-center gap-2">
-                  <ProgressBar value={progress} size="sm" className="max-w-[100px]" />
+                  <ProgressBar value={progress} size="sm" className="max-w-[80px]" />
                   <span className="text-[10px] text-muted-foreground tabular-nums">{progress}%</span>
                 </div>
               )}
@@ -182,15 +183,15 @@ export function VideoTableRow({
           </div>
         </td>
 
-        {/* Total Duration */}
-        <td className="py-3 px-3 text-sm tabular-nums text-muted-foreground w-28 hidden sm:table-cell">
+        {/* Total Duration — hidden on mobile, shown sm+ */}
+        <td className="py-3 px-3 text-xs tabular-nums text-muted-foreground w-20 hidden sm:table-cell">
           {video.total_duration_seconds > 0
             ? formatDuration(video.total_duration_seconds)
             : <span className="text-border">—</span>}
         </td>
 
-        {/* Watched Duration */}
-        <td className="py-3 px-3 w-32 hidden md:table-cell">
+        {/* Watched Duration — hidden on mobile, shown md+ */}
+        <td className="py-3 px-3 w-28 hidden md:table-cell">
           {editingDuration ? (
             <Input
               ref={durationRef}
@@ -207,7 +208,7 @@ export function VideoTableRow({
           ) : (
             <button
               onClick={startEditingDuration}
-              className="text-sm tabular-nums hover:text-primary transition-colors cursor-pointer rounded px-1 -ml-1 py-0.5"
+              className="text-xs tabular-nums hover:text-primary transition-colors cursor-pointer rounded px-1 -ml-1 py-0.5"
               title="Click to edit watched duration"
             >
               {video.watched_duration_seconds > 0
@@ -217,8 +218,8 @@ export function VideoTableRow({
           )}
         </td>
 
-        {/* Remaining */}
-        <td className="py-3 px-3 text-sm tabular-nums hidden lg:table-cell w-28">
+        {/* Remaining — hidden on mobile/tablet, shown lg+ */}
+        <td className="py-3 px-3 text-xs tabular-nums hidden lg:table-cell w-20">
           {video.total_duration_seconds > 0 ? (
             <span className={remaining === 0 ? 'text-emerald-400' : 'text-muted-foreground'}>
               {remaining === 0 ? '—' : formatDuration(remaining)}
@@ -228,8 +229,8 @@ export function VideoTableRow({
           )}
         </td>
 
-        {/* Completed checkbox */}
-        <td className="py-3 px-3 w-16">
+        {/* Completed checkbox — always visible */}
+        <td className="py-3 px-2 w-12">
           <div className="flex justify-center">
             {isSaving ? (
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -248,34 +249,37 @@ export function VideoTableRow({
           </div>
         </td>
 
-        {/* Notes toggle */}
-        <td className="py-3 px-3 hidden xl:table-cell">
+        {/* Notes toggle — always visible (was xl:only, now always accessible) */}
+        <td className="py-3 px-2 w-16">
           <button
             onClick={() => setShowNotes(!showNotes)}
             className={cn(
-              'flex items-center gap-1 text-xs rounded px-1.5 py-0.5 transition-colors',
+              'flex items-center justify-center gap-0.5 text-xs rounded px-1.5 py-1 transition-colors w-full',
               video.notes
                 ? 'text-primary hover:bg-primary/10'
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
             )}
+            title={video.notes ? 'View/edit notes' : 'Add note'}
           >
-            {video.notes ? '📝 View' : 'Add note'}
+            {/* On small screens just show the icon to save space */}
+            <span className="hidden sm:inline">{video.notes ? '📝' : '+'}</span>
+            <span className="sm:hidden">{video.notes ? '📝' : '+'}</span>
             {showNotes
               ? <ChevronUp className="h-3 w-3" />
               : <ChevronDown className="h-3 w-3" />}
           </button>
         </td>
 
-        {/* Revision Counter [-][n][+] */}
-        <td className="py-3 px-3 w-28">
-          <div className="flex items-center justify-center gap-1">
+        {/* Revision Counter [-][n][+] — always visible */}
+        <td className="py-3 px-2 w-24">
+          <div className="flex items-center justify-center gap-0.5">
             <button
               id={`revise-dec-${video.id}`}
               type="button"
               onClick={() => onDecrementRevision(video.id)}
               disabled={revCount === 0 || isSaving}
               className={cn(
-                'flex h-6 w-6 items-center justify-center rounded border transition-colors text-xs',
+                'flex h-6 w-6 items-center justify-center rounded border transition-colors',
                 revCount === 0
                   ? 'border-border/30 text-border cursor-not-allowed'
                   : 'border-border/50 text-muted-foreground hover:border-amber-500/50 hover:text-amber-400 hover:bg-amber-500/10'
@@ -286,7 +290,7 @@ export function VideoTableRow({
             </button>
             <span
               className={cn(
-                'w-7 text-center text-sm font-semibold tabular-nums',
+                'w-6 text-center text-sm font-semibold tabular-nums',
                 revCount > 0 ? 'text-amber-400' : 'text-muted-foreground/40'
               )}
             >
@@ -297,7 +301,7 @@ export function VideoTableRow({
               type="button"
               onClick={() => onIncrementRevision(video.id)}
               disabled={isSaving}
-              className="flex h-6 w-6 items-center justify-center rounded border border-border/50 text-muted-foreground hover:border-amber-500/50 hover:text-amber-400 hover:bg-amber-500/10 transition-colors text-xs"
+              className="flex h-6 w-6 items-center justify-center rounded border border-border/50 text-muted-foreground hover:border-amber-500/50 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
               title="Increase revision count"
             >
               <Plus className="h-3 w-3" />
@@ -305,18 +309,18 @@ export function VideoTableRow({
           </div>
         </td>
 
-        {/* Watch on YouTube */}
-        <td className="py-3 px-3 w-16 text-center hidden sm:table-cell">
+        {/* Watch on YouTube — always visible (icon-only on mobile, icon+text on sm+) */}
+        <td className="py-3 px-2 w-14 text-center">
           {video.youtube_video_id ? (
             <button
               id={`watch-${video.id}`}
               type="button"
               onClick={openInYouTube}
-              className="inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
+              className="inline-flex items-center justify-center gap-1 rounded px-1.5 py-1 text-[11px] font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
               title="Watch on YouTube"
             >
               <ExternalLink className="h-3 w-3" />
-              Watch
+              <span className="hidden sm:inline">Watch</span>
             </button>
           ) : (
             <span className="text-border text-xs">—</span>
@@ -324,7 +328,7 @@ export function VideoTableRow({
         </td>
 
         {/* Delete */}
-        <td className="py-3 pl-2 pr-4 w-10">
+        <td className="py-3 pl-1 pr-3 w-8">
           <Button
             id={`delete-video-${video.id}`}
             variant="ghost"
@@ -338,7 +342,7 @@ export function VideoTableRow({
         </td>
       </tr>
 
-      {/* Notes expansion row */}
+      {/* Notes expansion row — full width, spans all columns */}
       {showNotes && (
         <tr className="border-b border-border/30 bg-secondary/20">
           <td colSpan={10} className="px-4 py-3">

@@ -35,11 +35,11 @@ export function ContinueLearningBanner({ data }: ContinueLearningBannerProps) {
           style={{ backgroundColor: data.courseColor }}
         />
 
-        <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-3">
           {/* Thumbnail or play icon */}
           <div className="shrink-0">
             {data.thumbnailUrl ? (
-              <div className="relative w-24 h-[54px] rounded-lg overflow-hidden ring-1 ring-border/50">
+              <div className="relative w-20 h-[45px] sm:w-24 sm:h-[54px] rounded-lg overflow-hidden ring-1 ring-border/50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={data.thumbnailUrl}
@@ -57,7 +57,7 @@ export function ContinueLearningBanner({ data }: ContinueLearningBannerProps) {
               </div>
             ) : (
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center"
                 style={{ backgroundColor: `${data.courseColor}22` }}
               >
                 <Play
@@ -104,12 +104,13 @@ export function ContinueLearningBanner({ data }: ContinueLearningBannerProps) {
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="shrink-0">
+          {/* CTA — full-width on mobile (stacked layout), auto-width on sm+ */}
+          <div className="shrink-0 sm:shrink">
             <div
               className={cn(
-                'flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-white',
-                'transition-all duration-200 group-hover:shadow-lg group-hover:scale-[1.02]'
+                'flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-white',
+                'transition-all duration-200 group-hover:shadow-lg group-hover:scale-[1.02]',
+                'w-full sm:w-auto'
               )}
               style={{
                 background: `linear-gradient(135deg, ${data.courseColor}, ${data.courseColor}cc)`,

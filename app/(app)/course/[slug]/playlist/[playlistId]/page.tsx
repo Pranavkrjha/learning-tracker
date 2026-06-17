@@ -199,9 +199,10 @@ export default async function PlaylistPage({ params }: Props) {
       {/* Part F: Speed + Completion Projections Panel */}
       {rawRemainingSeconds > 0 && (
         <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 mb-5">
+          {/* On mobile: stack everything vertically. On sm+: side-by-side */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             {/* Speed selector */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 min-w-0">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Playback Speed
               </span>
@@ -211,38 +212,39 @@ export default async function PlaylistPage({ params }: Props) {
               />
             </div>
 
-            <div className="hidden sm:block w-px h-12 bg-border/50" />
+            <div className="hidden sm:block w-px h-12 bg-border/50 shrink-0" />
 
-            {/* Duration breakdown */}
-            <div className="flex flex-wrap gap-4 flex-1">
+            {/* Duration breakdown + finish estimates */}
+            <div className="flex flex-wrap items-start gap-4 flex-1 min-w-0">
               {/* Effective remaining */}
-              <div>
+              <div className="shrink-0">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-0.5 flex items-center gap-1">
                   <Zap className="h-2.5 w-2.5 text-yellow-400" />
-                  Effective at {speed.toFixed(2)}x
+                  At {speed.toFixed(2)}x
                 </p>
                 <p className="text-sm font-bold tabular-nums text-yellow-400">
                   {formatDurationHuman(effectiveRemainingSeconds)}
                 </p>
               </div>
 
-              {/* Divider */}
-              <div className="hidden sm:block w-px bg-border/50" />
+              {/* Vertical divider — only visible on sm+ */}
+              <div className="hidden sm:block w-px self-stretch bg-border/50 shrink-0" />
 
-              {/* Finish estimates — Part F: 4 speeds */}
-              <div>
+              {/* Finish estimates */}
+              <div className="min-w-0">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-1">
                   <CalendarDays className="h-2.5 w-2.5" />
                   Finish Estimate
                 </p>
-                <div className="flex items-center gap-3">
+                {/* flex-wrap so it wraps to 2 rows on very narrow screens */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   {[
                     { label: '1h/day', days: at1h, color: 'text-slate-400' },
                     { label: '2h/day', days: at2h, color: 'text-blue-400' },
                     { label: '3h/day', days: at3h, color: 'text-primary' },
                     { label: '4h/day', days: at4h, color: 'text-cyan-400' },
                   ].map(({ label, days, color }) => (
-                    <div key={label} className="text-center">
+                    <div key={label} className="text-center shrink-0">
                       <p className="text-[10px] text-muted-foreground">{label}</p>
                       <p className={`text-sm font-bold tabular-nums ${color}`}>
                         {days === 0 ? '—' : `${days}d`}

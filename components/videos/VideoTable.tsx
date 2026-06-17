@@ -130,34 +130,44 @@ export function VideoTable({ playlistId, initialVideos }: VideoTableProps) {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-border/50 bg-secondary/20">
-                <th className="py-2.5 pl-4 pr-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-10">
+                {/* # — narrow index column */}
+                <th className="py-2.5 pl-4 pr-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-8">
                   #
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                {/* Video title + thumbnail — always visible, expands to fill space */}
+                <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                   Video
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 hidden sm:table-cell">
+                {/* Total duration — hidden on mobile */}
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-20 hidden sm:table-cell">
                   Total
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-32 hidden md:table-cell">
+                {/* Watched duration — hidden on mobile/tablet */}
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 hidden md:table-cell">
                   Watched
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 hidden lg:table-cell">
-                  Remaining
+                {/* Remaining — hidden on mobile/tablet */}
+                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-20 hidden lg:table-cell">
+                  Left
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-16 text-center">
+                {/* Done — always visible */}
+                <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-12 text-center">
                   Done
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide hidden xl:table-cell">
+                {/* Notes — always visible (was xl:only) */}
+                <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-16 text-center">
                   Notes
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-28 text-center">
-                  Revisions
+                {/* Revisions — always visible */}
+                <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-24 text-center">
+                  Revs
                 </th>
-                <th className="py-2.5 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-16 text-center hidden sm:table-cell">
+                {/* Watch — always visible, icon-only on mobile */}
+                <th className="py-2.5 px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide w-14 text-center">
                   Watch
                 </th>
-                <th className="py-2.5 pl-2 pr-4 w-10" />
+                {/* Delete — invisible header, always present */}
+                <th className="py-2.5 pl-1 pr-3 w-8" />
               </tr>
             </thead>
             <tbody>
